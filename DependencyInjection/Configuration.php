@@ -23,6 +23,13 @@ class Configuration implements ConfigurationInterface
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.
+        $rootNode
+            ->children()
+                ->scalarNode('java')->defaultValue('/usr/bin/java')->end()
+                ->scalarNode('jar_packer')->end()
+                ->scalarNode('jar_yml')->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
