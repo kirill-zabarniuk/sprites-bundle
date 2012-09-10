@@ -6,7 +6,7 @@ use Symfony\Component\Finder\SplFileInfo;
 use Fernando\Bundle\SpritesBundle\Utils\Utils;
 
 /**
- * Description of Info
+ * Информация об изображении
  */
 class Info
 {
@@ -15,54 +15,57 @@ class Info
     const TAG_DELAY = 'd';
     const TAGS_SEPARATOR = ':';
 
+    /** @var \Imagick */
+    private $imagick;
+
     private $filePath;
     private $tags;
+
     private $width;
     private $height;
-
+    private $alphaChannel;
+    private $numberImages;
     private $delay = null;
 
+    private $fileHash;
+
+    /**
+     * Конструктор
+     * @param string $filePath Путь к изображению
+     * @param array  $tags     Массив тэгов
+     */
     public function __construct($filePath, $tags = array())
     {
         $this->filePath = $filePath;
         $this->tags = $tags;
 
-        $imagick = new \Imagick($filePath);
-        $imageType = $imagick->getImageType();
+        $this->imagick = new \Imagick($filePath);
+        $imageType = $this->imagick->getImageType();
 
+        $this->alphaChannel = $this->imagick->getImageAlphaChannel();
         // Картинка анимирована?
-        $numberImages = $imagick->getNumberImages();
+        $this->numberImages = $this->imagick->getNumberImages();
 
-        if ($numberImages > 1) {
-            $this->delay = $imagick->getImageDelay();
+        if ($this->numberImages > 1) {
+            $this->delay = $this->imagick->getImageDelay(); // TODO: разный delay для разных кадров
             $this->tags[] = Info::TAG_DELAY . $this->delay;
 
-            $imagick->setIteratorIndex(0);
-            $geometry = $imagick->getImage()->getImageGeometry();
+            $this->imagick->setIteratorIndex(0);
+            $geometry = $this->imagick->getImage()->getImageGeometry();
         } else {
-            $geometry = $imagick->getImageGeometry();
+            $geometry = $this->imagick->getImageGeometry();
         }
 
         $this->height = $geometry['height'];
         $this->width = $geometry['width'];
 
         $this->tags[] = Info::TAG_TYPE . $imageType;
-        $this->tags[] = Info::TAG_NUMBER_IMAGES . $numberImages;
-    }
-
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    public function getHeight()
-    {
-        return $this->height;
+        $this->tags[] = Info::TAG_NUMBER_IMAGES . $this->numberImages;
     }
 
     /**
      * Путь к файлу
-     * 
+     *
      * @return string
      */
     public function getFilePath()
@@ -70,6 +73,61 @@ class Info
         return $this->filePath;
     }
 
+    /**
+     * Объект imagick
+     *
+     * @return \Imagick
+     */
+    public function getImagick()
+    {
+        return $this->imagick;
+    }
+
+    /**
+     * Ширина изображения
+     * 
+     * @return int
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * Высота изображения
+     * 
+     * @return int
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * Значение ImageAlphaChannel (прозрачность)
+     * 
+     * @return int
+     */
+    public function getAlphaChannel()
+    {
+        return $this->alphaChannel;
+    }
+
+    /**
+     * Количество изображений ( > 1 для анимированных изображений)
+     *
+     * @return int
+     */
+    public function getNumberImages()
+    {
+        return $this->numberImages;
+    }
+
+    /**
+     * Массив тэгов
+     * 
+     * @return array
+     */
     public function getTags()
     {
         return $this->tags;
@@ -91,12 +149,16 @@ class Info
     }
 
     /**
-     * Уникальный id изображения
+     * Хэш изображения
      * 
      * @return type
      */
     public function getHash()
     {
-        return hash_file('crc32', $this->getFilePath());
+        if (!isset($this->fileHash)) {
+            $this->fileHash = hash_file('crc32', $this->getFilePath());
+        }
+
+        return $this->fileHash;
     }
 }

@@ -35,9 +35,10 @@ class SpritesBuildCommand extends Command
 
         $rootDir = $kernel->getRootDir();
         $webDir = realpath(join(DIRECTORY_SEPARATOR, array(
-            $rootDir,
-            '..',
-            'web',
+            $rootDir, '..', 'web',
+        )));
+        $imgDir = realpath(join(DIRECTORY_SEPARATOR, array(
+            $rootDir, '..', 'web', 'img',
         )));
 
 //        // TRYING ASSETIC FILTERS
@@ -50,23 +51,31 @@ class SpritesBuildCommand extends Command
 //        $result = $sprites->dump($filter);
 //        var_dump($result, $webDir);
 
-        $infoCollection = new \Fernando\Bundle\SpritesBundle\Image\InfoCollection();
+        $infoGroups = new \Fernando\Bundle\SpritesBundle\Image\InfoGroups();
 
         $finder = new \Symfony\Component\Finder\Finder();
-        $finder->files()->name('/\.(gif|png|jpe?g)$/')->in($webDir . strtr('/bundles/fernandonews/img', '/', DIRECTORY_SEPARATOR));
+        $finder
+            ->files()
+            ->name('/\.(gif|png|jpe?g)$/')
+            ->in($webDir . strtr('/bundles/fernandonews/img', '/', DIRECTORY_SEPARATOR))
+        ;
         foreach ($finder as $file) {
-            $info = new \Fernando\Bundle\SpritesBundle\Image\Info($file->getRealpath());
-            $infoCollection->add($info);
+            $infoGroups->add($file->getRealpath());
         }
 
-//        $packer = new \Fernando\Bundle\SpritesBundle\Image\Sprite\PackerGuillotine();
         $packer = $container->get('fernando.sprites.packer');
+        /* @var $packer \Fernando\Bundle\SpritesBundle\Packer\PackerInterface */
+        $builder = new \Fernando\Bundle\SpritesBundle\Image\Sprite\BuilderBase();
+        foreach ($infoGroups->getGroups() as $groupId => $infoGroup) {
+            /* @var $infoGroup \Fernando\Bundle\SpritesBundle\Image\InfoGroup */
+            $positions = $packer->getPositions($infoGroup->getDimensions());
+            $infoGroup->setPositions($positions);
 
-//        foreach ($infoCollection->getCollections() as $group => $infoCollection) {
-        foreach ($infoCollection->getDimensions() as $tagStr => $dimensions) {
-            $positionMap = $packer->pack($dimensions);
-            var_dump($positionMap);
+            $sprite = $builder->build($infoGroup);
+            $fileName = md5($sprite->getImagick()->getImageBlob()) . '.' . $sprite->getImagick()->getImageFormat();
+            $sprite->save($imgDir . DIRECTORY_SEPARATOR . $fileName);
+
+            
         }
-        die;
     }
 }

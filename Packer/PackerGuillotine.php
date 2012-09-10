@@ -5,7 +5,10 @@ namespace Fernando\Bundle\SpritesBundle\Packer;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 
-class PackerGuillotine
+/**
+ * Класс отвечающий за расположение изображений на спрайте
+ */
+class PackerGuillotine implements PackerInterface
 {
     private $jarPathYml;
     private $jarPath;
@@ -16,6 +19,13 @@ class PackerGuillotine
         'max-width' => 2000,
     );
 
+    /**
+     * Конструктор
+     * 
+     * @param string $jarPathYml Путь к snakeyaml.jar
+     * @param string $jarPath    Путь к spritetools.jar
+     * @param string $javaPath   Путь к java
+     */
     public function __construct($jarPathYml, $jarPath, $javaPath = '/usr/bin/java')
     {
         $this->jarPathYml = $jarPathYml;
@@ -23,11 +33,17 @@ class PackerGuillotine
         $this->javaPath   = $javaPath;
     }
 
-    public function pack($map, $options = array())
+    /**
+     * Вычисление координат изображений на спрайте
+     * 
+     * @param array $dimensions Массив с размерами изображений
+     * @param array $options    Опции
+     * 
+     * @return array
+     * @throws \RuntimeException
+     */
+    public function getPositions($dimensions, $options = array())
     {
-//        $cmd = strtr('%java_path% -Djava.awt.headless=true -cp %base%/lib/snakeyaml-1.9-SNAPSHOT.jar -jar %base%/lib/spritetools-1.0.jar', array(
-//            '%base%' => __DIR__ . '/../vendor/spritetools'
-//        ));
         $cmd = strtr('%java_path% -Djava.awt.headless=true -cp %jar_path_yml% -jar %jar_path%', array(
             '%java_path%'    => $this->javaPath,
             '%jar_path_yml%' => $this->jarPathYml,
@@ -35,7 +51,7 @@ class PackerGuillotine
         ));
 
         $params = array_merge($this->defaultOptions, $options);
-        $params['blocks'] = $map;
+        $params['blocks'] = $dimensions;
 
         $descriptorSpec = array(
             0 => array("pipe", "r"),
