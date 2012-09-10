@@ -6,8 +6,8 @@ use Symfony\Component\Console\Command\Command;
 //use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Assetic\Asset\FileAsset;
-use Assetic\Asset\GlobAsset;
+//use Assetic\Asset\FileAsset;
+//use Assetic\Asset\GlobAsset;
 
 /**
  * Description of SpritesBuildCommand
@@ -38,7 +38,10 @@ class SpritesBuildCommand extends Command
             $rootDir, '..', 'web',
         )));
         $imgDir = realpath(join(DIRECTORY_SEPARATOR, array(
-            $rootDir, '..', 'web', 'img',
+            $webDir, 'img',
+        )));
+        $cssDir = realpath(join(DIRECTORY_SEPARATOR, array(
+            $webDir, 'css',
         )));
 
 //        // TRYING ASSETIC FILTERS
@@ -51,7 +54,7 @@ class SpritesBuildCommand extends Command
 //        $result = $sprites->dump($filter);
 //        var_dump($result, $webDir);
 
-        $infoGroups = new \Fernando\Bundle\SpritesBundle\Image\InfoGroups();
+        $infoGroups = new \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroups();
 
         $finder = new \Symfony\Component\Finder\Finder();
         $finder
@@ -65,9 +68,10 @@ class SpritesBuildCommand extends Command
 
         $packer = $container->get('fernando.sprites.packer');
         /* @var $packer \Fernando\Bundle\SpritesBundle\Packer\PackerInterface */
-        $builder = new \Fernando\Bundle\SpritesBundle\Image\Sprite\BuilderBase();
+        $builder = new \Fernando\Bundle\SpritesBundle\Sprite\BuilderBase();
+        $css = new \Fernando\Bundle\SpritesBundle\Sprite\Css\Css();
         foreach ($infoGroups->getGroups() as $groupId => $infoGroup) {
-            /* @var $infoGroup \Fernando\Bundle\SpritesBundle\Image\InfoGroup */
+            /* @var $infoGroup \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup */
             $positions = $packer->getPositions($infoGroup->getDimensions());
             $infoGroup->setPositions($positions);
 
@@ -75,7 +79,8 @@ class SpritesBuildCommand extends Command
             $fileName = md5($sprite->getImagick()->getImageBlob()) . '.' . $sprite->getImagick()->getImageFormat();
             $sprite->save($imgDir . DIRECTORY_SEPARATOR . $fileName);
 
-            
+            $css->add($groupId, 'img' . DIRECTORY_SEPARATOR . $fileName, $infoGroup);
         }
+        $css->dump($cssDir . DIRECTORY_SEPARATOR . 'sprite.css');
     }
 }

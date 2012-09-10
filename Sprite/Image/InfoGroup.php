@@ -1,6 +1,6 @@
 <?php
 
-namespace Fernando\Bundle\SpritesBundle\Image;
+namespace Fernando\Bundle\SpritesBundle\Sprite\Image;
 
 /**
  * Информация об изображениях из одного спрайта
@@ -19,7 +19,7 @@ class InfoGroup
     /**
      * Добавление информации об изображении
      * 
-     * @param \Fernando\Bundle\SpritesBundle\Image\Info $info Информация об изображении
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\Info $info Информация об изображении
      *
      * @return
      */
@@ -57,7 +57,7 @@ class InfoGroup
      *
      * @param array $positions Массив с координатами изображений на спрайте
      *
-     * @return \Fernando\Bundle\SpritesBundle\Image\InfoGroup
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup
      */
     public function setPositions($positions = array())
     {

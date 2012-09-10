@@ -1,8 +1,8 @@
 <?php
 
-namespace Fernando\Bundle\SpritesBundle\Image\Sprite;
+namespace Fernando\Bundle\SpritesBundle\Sprite;
 
-use Fernando\Bundle\SpritesBundle\Image\InfoGroup;
+use Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup;
 
 /**
  * Description of BuilderBase
@@ -43,12 +43,12 @@ class BuilderBase
     /**
      * Построение неанимированного спрайта
      * 
-     * @param \Fernando\Bundle\SpritesBundle\Image\InfoGroup $infoGroup    Информация об изображениях
-     * @param int                                            $width        Ширина
-     * @param int                                            $height       Высота
-     * @param int                                            $alphaChannel Альфа-канал
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup $infoGroup    Информация об изображениях
+     * @param int                                                   $width        Ширина
+     * @param int                                                   $height       Высота
+     * @param int                                                   $alphaChannel Альфа-канал
      * 
-     * @return \Fernando\Bundle\SpritesBundle\Image\Sprite\BuilderBase
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\BuilderBase
      */
     protected function buildStaticSprite(InfoGroup $infoGroup, $width, $height, $alphaChannel)
     {
@@ -83,7 +83,7 @@ class BuilderBase
         $positions = $infoGroup->getPositions();
 
         foreach ($infoGroup->getInfo() as $imageId => $info) {
-            /* @var $info \Fernando\Bundle\SpritesBundle\Image\Info */
+            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\Info */
             $position = $positions[$imageId];
 
             $layerId = 0;
@@ -104,9 +104,6 @@ class BuilderBase
         foreach ($layers as $layerId => $layer) {
             $this->imagick->addImage($layer);
             $this->imagick->setImageDelay($delays[$layerId]);
-
-            $layer->clear();
-            $layer->destroy();
         }
         $this->imagick->setImageFormat('gif');
 
@@ -116,9 +113,9 @@ class BuilderBase
     /**
      * Построение спрайта
      * 
-     * @param \Fernando\Bundle\SpritesBundle\Image\InfoGroup $infoGroup
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup $infoGroup
      * 
-     * @return \Fernando\Bundle\SpritesBundle\Image\Sprite\BuilderBase
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\BuilderBase
      */
     public function build(InfoGroup $infoGroup)
     {
@@ -130,7 +127,7 @@ class BuilderBase
         $positions = $infoGroup->getPositions();
 
         foreach ($infoGroup->getInfo() as $imageId => $info) {
-            /* @var $info \Fernando\Bundle\SpritesBundle\Image\Info */
+            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\Info */
             $isAnimated = $isAnimated || ($info->getNumberImages() > 1);
             $alphaChannel = $alphaChannel || $info->getAlphaChannel();
 
@@ -164,8 +161,5 @@ class BuilderBase
         } else {
             $this->getImagick()->writeImages($filepath, true);
         }
-
-        $this->getImagick()->clear();
-        $this->getImagick()->destroy();
     }
 }

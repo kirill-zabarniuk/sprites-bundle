@@ -1,9 +1,6 @@
 <?php
 
-namespace Fernando\Bundle\SpritesBundle\Image;
-
-use Fernando\Bundle\SpritesBundle\Image\Info;
-use Fernando\Bundle\SpritesBundle\Image\InfoGroup;
+namespace Fernando\Bundle\SpritesBundle\Sprite\Image;
 
 /**
  * Группировка сходных изображений в спрайты

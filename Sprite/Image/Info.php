@@ -1,8 +1,7 @@
 <?php
 
-namespace Fernando\Bundle\SpritesBundle\Image;
+namespace Fernando\Bundle\SpritesBundle\Sprite\Image;
 
-use Symfony\Component\Finder\SplFileInfo;
 use Fernando\Bundle\SpritesBundle\Utils\Utils;
 
 /**
