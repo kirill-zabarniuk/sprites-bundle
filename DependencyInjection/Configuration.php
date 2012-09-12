@@ -28,6 +28,11 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('java')->defaultValue('/usr/bin/java')->end()
                 ->scalarNode('jar_packer')->end()
                 ->scalarNode('jar_yml')->end()
+                ->arrayNode('css')
+                    ->children()
+                        ->scalarNode('class')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 
