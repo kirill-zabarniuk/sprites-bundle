@@ -6,16 +6,17 @@
 
     <parameters>
         <parameter key="fernando.sprites.java">%fernando.java%</parameter>
-        <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
-        <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\Manager</parameter>
+        <parameter key="fernando.formula_loader.alias">php_sprite</parameter>
 
-        <parameter key="fernando.assetic_filter.sprite.class">Fernando\Bundle\SpritesBundle\Filter\SpriteFilter</parameter>
+        <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
+        <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\SpriteManager</parameter>
+        <parameter key="fernando.sprites.css_manager.class">Fernando\Bundle\SpritesBundle\Sprite\CssManager</parameter>
+
+        <parameter key="fernando.assetic_filter.sprite.class">Fernando\Bundle\SpritesBundle\Filter\FakeSpriteFilter</parameter>
         <parameter key="fernando.helper.sprite.class">Fernando\Bundle\SpritesBundle\Templating\SpriteHelper</parameter>
         <parameter key="fernando.formula_loader.class">Fernando\Bundle\SpritesBundle\Factory\Loader\FormulaLoader</parameter>
-        <parameter key="fernando.formula_loader.alias">php_sprite</parameter>
         <parameter key="fernando.config_resource.class">Symfony\Bundle\AsseticBundle\Factory\Resource\ConfigurationResource</parameter>
-
-        <parameter key="assetic.worker.cache_busting_path.class">Fernando\Bundle\SpritesBundle\Factory\Worker\CacheBustingPathWorker</parameter>
+        <parameter key="assetic.worker.build_sprite.class">Fernando\Bundle\SpritesBundle\Factory\Worker\BuildSpritesWorker</parameter>
     </parameters>
 
     <services>
@@ -26,12 +27,13 @@
         </service>
         <service id="fernando.sprites.manager" class="%fernando.sprites.manager.class%">
             <argument type="service" id="fernando.sprites.packer" />
+            <argument type="service" id="fernando.sprites.css_manager" />
             <argument>%kernel.root_dir%</argument>
         </service>
+        <service id="fernando.sprites.css_manager" class="%fernando.sprites.css_manager.class%" />
 
         <service id="fernando.assetic_filter.sprite" class="%fernando.assetic_filter.sprite.class%">
             <tag name="assetic.filter" alias="sprite" />
-            <argument type="service" id="fernando.sprites.manager" />
         </service>
         <service id="fernando.helper.sprite" class="%fernando.helper.sprite.class%" scope="request">
             <!-- <tag name="assetic.templating.php" /> -->
@@ -41,6 +43,7 @@
         </service>
 
         <service id="fernando.php_formula_loader" class="%assetic.cached_formula_loader.class%">
+            <!--TODO: использовать fernando.php_formula_loader а не fernando.php_formula_loader.real -->
             <!--<tag name="assetic.formula_loader" alias="php_sprite" />-->
             <tag name="assetic.templating.php" />
             <argument type="service" id="fernando.php_formula_loader.real" />
@@ -52,9 +55,9 @@
             <tag name="assetic.templating.php" />
             <argument type="service" id="assetic.asset_factory" />
         </service>
-
-        <service id="assetic.worker.cache_busting_path" class="%assetic.worker.cache_busting_path.class%" public="false">
-            <!--<tag name="assetic.factory_worker" />-->
+        <service id="assetic.worker.build_sprite" class="%assetic.worker.build_sprite.class%" public="false">
+            <tag name="assetic.factory_worker" />
+            <argument type="service" id="fernando.sprites.manager" />
         </service>
     </services>
 </container>

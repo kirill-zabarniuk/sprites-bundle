@@ -7,7 +7,7 @@ use Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup;
 /**
  * Description of BuilderBase
  */
-class BuilderBase
+class SpriteBuilder
 {
     private $imagick = null;
     private $jpgEnabled = true;
@@ -48,7 +48,7 @@ class BuilderBase
      * @param int                                                   $height       Высота
      * @param int                                                   $alphaChannel Альфа-канал
      * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\BuilderBase
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\SpriteBuilder
      */
     protected function buildStaticSprite(InfoGroup $infoGroup, $width, $height, $alphaChannel)
     {
@@ -115,7 +115,7 @@ class BuilderBase
      * 
      * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup $infoGroup
      * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\BuilderBase
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\SpriteBuilder
      */
     public function build(InfoGroup $infoGroup)
     {
@@ -143,8 +143,7 @@ class BuilderBase
 
         return $isAnimated
             ? $this->buildAnimatedSprite($infoGroup, $spriteWidth, $spriteHeight)
-            : $this->buildStaticSprite($infoGroup, $spriteWidth, $spriteHeight, $alphaChannel)
-        ;
+            : $this->buildStaticSprite($infoGroup, $spriteWidth, $spriteHeight, $alphaChannel);
     }
 
     /**
