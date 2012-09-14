@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="fernando.sprites.java">%fernando.java%</parameter>
         <parameter key="fernando.formula_loader.alias">php_sprite</parameter>
+        <parameter key="fernando.cache_dir">%kernel.cache_dir%/fernando</parameter>
 
         <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
         <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\SpriteManager</parameter>
@@ -14,8 +15,7 @@
 
         <parameter key="fernando.assetic_filter.sprite.class">Fernando\Bundle\SpritesBundle\Filter\FakeSpriteFilter</parameter>
         <parameter key="fernando.helper.sprite.class">Fernando\Bundle\SpritesBundle\Templating\SpriteHelper</parameter>
-        <parameter key="fernando.formula_loader.class">Fernando\Bundle\SpritesBundle\Factory\Loader\FormulaLoader</parameter>
-        <parameter key="fernando.config_resource.class">Symfony\Bundle\AsseticBundle\Factory\Resource\ConfigurationResource</parameter>
+        <parameter key="fernando.formula_loader.class">Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteFormulaLoader</parameter>
         <parameter key="assetic.worker.build_sprite.class">Fernando\Bundle\SpritesBundle\Factory\Worker\BuildSpritesWorker</parameter>
     </parameters>
 
@@ -42,16 +42,17 @@
             <argument type="service" id="assetic.asset_factory" /> -->
         </service>
 
+        <service id="fernando.assetic_config_cache" class="%assetic.config_cache.class%" public="false">
+            <argument>%fernando.cache_dir%/config</argument>
+        </service>
         <service id="fernando.php_formula_loader" class="%assetic.cached_formula_loader.class%">
-            <!--TODO: использовать fernando.php_formula_loader а не fernando.php_formula_loader.real -->
-            <!--<tag name="assetic.formula_loader" alias="php_sprite" />-->
+            <tag name="assetic.formula_loader" alias="%fernando.formula_loader.alias%" />
             <tag name="assetic.templating.php" />
             <argument type="service" id="fernando.php_formula_loader.real" />
-            <argument type="service" id="assetic.config_cache" />
+            <argument type="service" id="fernando.assetic_config_cache" />
             <argument>%kernel.debug%</argument>
         </service>
         <service id="fernando.php_formula_loader.real" class="%fernando.formula_loader.class%">
-            <tag name="assetic.formula_loader" alias="%fernando.formula_loader.alias%" />
             <tag name="assetic.templating.php" />
             <argument type="service" id="assetic.asset_factory" />
         </service>

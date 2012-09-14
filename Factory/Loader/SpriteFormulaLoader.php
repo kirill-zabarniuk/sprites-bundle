@@ -2,14 +2,13 @@
 
 namespace Fernando\Bundle\SpritesBundle\Factory\Loader;
 
-use Assetic\Factory\AssetFactory;
 use Assetic\Factory\Loader\BasePhpFormulaLoader;
 use Assetic\Factory\Resource\ResourceInterface;
 
 /**
  * Парсит php шаблоны и строит формулы, по которым затем создаются asset-ы
  */
-class FormulaLoader extends BasePhpFormulaLoader
+class SpriteFormulaLoader extends BasePhpFormulaLoader
 {
     private $inputs = array();
 
