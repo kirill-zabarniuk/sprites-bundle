@@ -92,7 +92,6 @@ class SpriteManager
 
             $css->add($groupId, 'img' . DIRECTORY_SEPARATOR . $fileName, $infoGroup);
         }
-//        $css->dump($this->getCssDir() . DIRECTORY_SEPARATOR . 'sprite.css');
     }
 
     /**

@@ -12,6 +12,7 @@
         <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
         <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\SpriteManager</parameter>
         <parameter key="fernando.sprites.css_manager.class">Fernando\Bundle\SpritesBundle\Sprite\CssManager</parameter>
+        <parameter key="fernando.sprites.css_templates.class">Fernando\Bundle\SpritesBundle\Templating\CssTemplates</parameter>
 
         <parameter key="fernando.assetic_filter.sprite.class">Fernando\Bundle\SpritesBundle\Filter\FakeSpriteFilter</parameter>
         <parameter key="fernando.helper.sprite.class">Fernando\Bundle\SpritesBundle\Templating\SpriteHelper</parameter>
@@ -30,7 +31,10 @@
             <argument type="service" id="fernando.sprites.css_manager" />
             <argument>%kernel.root_dir%</argument>
         </service>
-        <service id="fernando.sprites.css_manager" class="%fernando.sprites.css_manager.class%" />
+        <service id="fernando.sprites.css_manager" class="%fernando.sprites.css_manager.class%">
+            <argument type="service" id="fernando.sprites.css_templates" />
+        </service>
+        <service id="fernando.sprites.css_templates" class="%fernando.sprites.css_templates.class%" />
 
         <service id="fernando.assetic_filter.sprite" class="%fernando.assetic_filter.sprite.class%">
             <tag name="assetic.filter" alias="sprite" />
@@ -40,6 +44,8 @@
             <tag name="templating.helper" alias="fernando" />
             <!-- <argument type="service" id="templating.helper.assets" />
             <argument type="service" id="assetic.asset_factory" /> -->
+            <argument type="service" id="fernando.sprites.css_templates" />
+            <argument>%kernel.root_dir%</argument>
         </service>
 
         <service id="fernando.assetic_config_cache" class="%assetic.config_cache.class%" public="false">

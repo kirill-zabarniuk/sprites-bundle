@@ -3,24 +3,50 @@
 namespace Fernando\Bundle\SpritesBundle\Sprite;
 
 use Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroup;
+use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
 
 /**
  * Description of Css
  */
 class CssManager
 {
+    private $templates;
     private $filename = 'sprite.css';
     private $cssDir   = 'css';
-
-    private $cssClass = 'sprite';
-    private $headerTemplate   = "span.%class% {display: inline-block; background-repeat: no-repeat; display: -moz-inline-stack; zoom: 1; *display: inline;}\r\n";
-    private $spriteTemplate   = "\r\n.g%group% {background-image: url(%url%);}\r\n";
-    private $positionTemplate = ".i%image% {background-position: -%left%px -%top%px;}\r\n";
-    private $sizeTemplate     = ".d%size% {width: %width%px; height: %height%px;}\r\n";
 
     private $spriteIds  = array();
     private $dimensions = array();
     private $contents   = array();
+
+    /**
+     * Конструктор
+     * 
+     * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates $templates
+     */
+    public function __construct(CssTemplates $templates)
+    {
+        $this->templates = $templates;
+    }
+
+    /**
+     * Сервис css шаблонов
+     *
+     * @return CssTemplates
+     */
+    private function getTemplates()
+    {
+        return $this->templates;
+    }
+
+    /**
+     * Имя файла со стилями для спрайтов
+     *
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
 
     /**
      * Установка каталога для сохранения css файлов
@@ -40,104 +66,6 @@ class CssManager
     public function getCssDir()
     {
         return $this->cssDir;
-    }
-
-    /**
-     * Имя файла со стилями для спрайтов
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    /**
-     * Установка имени css-класса, который используется для работы со спрайтами
-     * 
-     * @param string $class
-     *
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Css\Css
-     */
-    public function setCssClass($class)
-    {
-        $this->cssClass = $class;
-
-        return $this;
-    }
-
-    /**
-     * Получение имени css-класса, который используется для работы со спрайтами
-     * 
-     * @return string
-     */
-    public function getCssClass()
-    {
-        return $this->cssClass;
-    }
-
-    /**
-     * Установка шаблона с общими стилями
-     *
-     * Доступны placeholder-ы: %class%
-     * 
-     * @param string $template
-     *
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Css\Css
-     */
-    public function setHeaderTemplate($template)
-    {
-        $this->headerTemplate = $template;
-
-        return $this;
-    }
-
-    /**
-     * Установка шаблона, описывающего стили спрайта
-     *
-     * Доступны placeholder-ы: %group%, %url%
-     *
-     * @param string $template
-     * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Css\Css
-     */
-    public function setSpriteTemplate($template)
-    {
-        $this->spriteTemplate = $template;
-
-        return $this;
-    }
-
-    /**
-     * Установка шаблона, описывающего стили изображений
-     * 
-     * Доступны placeholder-ы: %image%, %left%, %top%
-     *
-     * @param string $template
-     * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Css\Css
-     */
-    public function setImageTemplate($template)
-    {
-        $this->positionTemplate = $template;
-
-        return $this;
-    }
-
-    /**
-     * Установка шаблона, описывающего размеры изображений
-     * 
-     * Доступны placeholder-ы: %size%, %width%, %height%
-     *
-     * @param string $template
-     * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Css\Css
-     */
-    public function setSizeTemplate($template)
-    {
-        $this->sizeTemplate = $template;
-
-        return $this;
     }
 
     /**
@@ -166,15 +94,16 @@ class CssManager
             $this->dimensions[$key] = $dimensions;
         }
 
-        $this->contents[$spriteId] = strtr($this->spriteTemplate, array(
-            '%group%' => $spriteId,
-            '%url%'   => $filepath,
+        $this->contents[$spriteId] = $this->getTemplates()->getSpriteTemplate(array(
+            '%sprite_class%' => $this->getTemplates()->getSpriteClass($spriteId),
+            '%url%'          => '/' . $filepath,
         ));
+
         foreach ($infoGroup->getPositions() as $imageId => $position) {
-            $this->contents[$spriteId] .= strtr($this->positionTemplate, array(
-                '%image%' => $imageId,
-                '%left%'  => $position['l'],
-                '%top%'   => $position['t'],
+            $this->contents[$spriteId] .= $this->getTemplates()->getImageTemplate(array(
+                '%image_class%' => $this->getTemplates()->getImageClass($imageId),
+                '%left%'        => $position['l'],
+                '%top%'         => $position['t'],
             ));
         }
     }
@@ -186,8 +115,8 @@ class CssManager
      */
     public function getHeaderCss()
     {
-        return strtr($this->headerTemplate, array(
-            '%class%' => $this->cssClass,
+        return $this->getTemplates()->getHeaderTemplate(array(
+            '%class%' => $this->getTemplates()->getCssClass(),
         ));
     }
 
@@ -217,10 +146,10 @@ class CssManager
     {
         $content = '';
         foreach ($this->dimensions as $size => $dimension) {
-            $content .= strtr($this->sizeTemplate, array(
-                '%size%'   => $size,
-                '%width%'  => $dimension['w'],
-                '%height%' => $dimension['h'],
+            $content .= $this->getTemplates()->getSizeTemplate(array(
+                '%size_class%' => $this->getTemplates()->getSizeClass($size),
+                '%width%'      => $dimension['w'],
+                '%height%'     => $dimension['h'],
             ));
         }
 
