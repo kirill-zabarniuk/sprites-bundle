@@ -57,7 +57,7 @@ class SpriteBuilder
         $positions = $infoGroup->getPositions();
 
         foreach ($infoGroup->getInfo() as $imageId => $info) {
-            /* @var $info \Fernando\Bundle\SpritesBundle\Image\Info */
+            /* @var $info Image\ImageInfoInterface */
             $position = $positions[$imageId];
 
             $this->imagick->compositeImage(
@@ -83,7 +83,7 @@ class SpriteBuilder
         $positions = $infoGroup->getPositions();
 
         foreach ($infoGroup->getInfo() as $imageId => $info) {
-            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\Info */
+            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface */
             $position = $positions[$imageId];
 
             $layerId = 0;
@@ -127,7 +127,7 @@ class SpriteBuilder
         $positions = $infoGroup->getPositions();
 
         foreach ($infoGroup->getInfo() as $imageId => $info) {
-            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\Info */
+            /* @var $info \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface */
             $isAnimated = $isAnimated || ($info->getNumberImages() > 1);
             $alphaChannel = $alphaChannel || $info->getAlphaChannel();
 

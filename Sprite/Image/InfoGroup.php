@@ -19,11 +19,11 @@ class InfoGroup
     /**
      * Добавление информации об изображении
      * 
-     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\Info $info Информация об изображении
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface $info Информация об изображении
      *
      * @return
      */
-    public function add(Info $info)
+    public function add(ImageInfoInterface $info)
     {
         $this->info[$info->getHash()] = $info;
         $this->dimensions[$info->getHash()] = array(
@@ -35,7 +35,7 @@ class InfoGroup
     /**
      * Получение инфморации об изображении
      * 
-     * @return Info
+     * @return ImageInfoInterface
      */
     public function getInfo()
     {

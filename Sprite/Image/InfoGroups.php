@@ -2,12 +2,35 @@
 
 namespace Fernando\Bundle\SpritesBundle\Sprite\Image;
 
+use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader;
+
 /**
  * Группировка сходных изображений в спрайты
  */
 class InfoGroups
 {
+    private $infoLoader = null;
     private $groups = array();
+
+    /**
+     * Конструктор
+     * 
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader $infoLoader Сервис получения информации об изображениях
+     */
+    public function __construct(ImageInfoLoader $infoLoader)
+    {
+        $this->infoLoader = $infoLoader;
+    }
+
+    /**
+     * Сервис получения информации об изображениях
+     *
+     * @return Image\ImageInfoLoader
+     */
+    private function getImageInfoLoader()
+    {
+        return $this->infoLoader;
+    }
 
     /**
      * Добавление информации об изображении
@@ -16,7 +39,7 @@ class InfoGroups
      */
     public function add($path)
     {
-        $info = new Info($path);
+        $info = $this->getImageInfoLoader()->load($path);
 
         $groupId = $info->getTagsStr();
         if (!array_key_exists($groupId, $this->groups)) {

@@ -9,6 +9,7 @@
         <parameter key="fernando.formula_loader.alias">php_sprite</parameter>
         <parameter key="fernando.cache_dir">%kernel.cache_dir%/fernando</parameter>
 
+        <parameter key="fernando.sprites.info_loader.class">Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader</parameter>
         <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
         <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\SpriteManager</parameter>
         <parameter key="fernando.sprites.css_manager.class">Fernando\Bundle\SpritesBundle\Sprite\CssManager</parameter>
@@ -21,12 +22,16 @@
     </parameters>
 
     <services>
+        <service id="fernando.sprites.info_loader" class="%fernando.sprites.info_loader.class%">
+            <argument type="service" id="fernando.assetic_config_cache" />
+        </service>
         <service id="fernando.sprites.packer" class="%fernando.sprites.packer.class%">
             <argument>%fernando.sprites.jar_yml%</argument>
             <argument>%fernando.sprites.jar_packer%</argument>
             <argument>%fernando.sprites.java%</argument>
         </service>
         <service id="fernando.sprites.manager" class="%fernando.sprites.manager.class%">
+            <argument type="service" id="fernando.sprites.info_loader" />
             <argument type="service" id="fernando.sprites.packer" />
             <argument type="service" id="fernando.sprites.css_manager" />
             <argument>%kernel.root_dir%</argument>
@@ -40,10 +45,8 @@
             <tag name="assetic.filter" alias="sprite" />
         </service>
         <service id="fernando.helper.sprite" class="%fernando.helper.sprite.class%" scope="request">
-            <!-- <tag name="assetic.templating.php" /> -->
             <tag name="templating.helper" alias="fernando" />
-            <!-- <argument type="service" id="templating.helper.assets" />
-            <argument type="service" id="assetic.asset_factory" /> -->
+            <argument type="service" id="fernando.sprites.info_loader" />
             <argument type="service" id="fernando.sprites.css_templates" />
             <argument>%kernel.root_dir%</argument>
         </service>

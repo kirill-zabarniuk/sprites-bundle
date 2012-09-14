@@ -3,6 +3,8 @@
 namespace Fernando\Bundle\SpritesBundle\Sprite;
 
 use Fernando\Bundle\SpritesBundle\Packer\PackerInterface;
+use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader;
+use Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroups;
 use Fernando\Bundle\SpritesBundle\Sprite\CssManager;
 
 /**
@@ -10,23 +12,36 @@ use Fernando\Bundle\SpritesBundle\Sprite\CssManager;
  */
 class SpriteManager
 {
-    private $packer;
-    private $cssManager;
-    private $rootDir;
-    private $files = array();
+    private $infoLoader = null;
+    private $packer     = null;
+    private $cssManager = null;
+    private $rootDir    = '';
+    private $files      = array();
 
     /**
      * Конструктор
      * 
-     * @param \Fernando\Bundle\SpritesBundle\Packer\PackerInterface $packer     Packer сервис
-     * @param \Fernando\Bundle\SpritesBundle\Sprite\CssManager      $cssManager Css Manager
-     * @param string                                                $rootDir    Application root directory
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader $infoLoader Сервис получения информации об изображениях
+     * @param \Fernando\Bundle\SpritesBundle\Packer\PackerInterface       $packer     Packer сервис
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\CssManager            $cssManager Css Manager
+     * @param string                                                      $rootDir    Application root directory
      */
-    public function __construct(PackerInterface $packer, CssManager $cssManager, $rootDir)
+    public function __construct(ImageInfoLoader $infoLoader, PackerInterface $packer, CssManager $cssManager, $rootDir)
     {
+        $this->infoLoader = $infoLoader;
         $this->packer     = $packer;
         $this->cssManager = $cssManager;
         $this->rootDir    = $rootDir;
+    }
+
+    /**
+     * Сервис получения информации об изображениях
+     *
+     * @return Image\ImageInfoLoader
+     */
+    private function getImageInfoLoader()
+    {
+        return $this->infoLoader;
     }
 
     /**
@@ -73,7 +88,7 @@ class SpriteManager
      */
     public function process($files)
     {
-        $infoGroups = new \Fernando\Bundle\SpritesBundle\Sprite\Image\InfoGroups();
+        $infoGroups = new InfoGroups($this->getImageInfoLoader());
 
         foreach ($files as $file) {
             $infoGroups->add($file);

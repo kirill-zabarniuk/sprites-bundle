@@ -7,7 +7,7 @@ use Fernando\Bundle\SpritesBundle\Utils\Utils;
 /**
  * Информация об изображении
  */
-class Info
+class ImageInfo implements ImageInfoInterface
 {
     const TAG_TYPE = 't';
     const TAG_NUMBER_IMAGES = 'n';
@@ -30,7 +30,7 @@ class Info
 
     /**
      * Конструктор
-     * @param string $filePath Путь к изображению
+     * @param string $filePath Абсолютный путь к изображению
      * @param array  $tags     Массив тэгов
      */
     public function __construct($filePath, $tags = array())
@@ -47,7 +47,7 @@ class Info
 
         if ($this->numberImages > 1) {
             $this->delay = $this->imagick->getImageDelay(); // TODO: разный delay для разных кадров
-            $this->tags[] = Info::TAG_DELAY . $this->delay;
+            $this->tags[] = ImageInfo::TAG_DELAY . $this->delay;
 
             $this->imagick->setIteratorIndex(0);
             $geometry = $this->imagick->getImage()->getImageGeometry();
@@ -58,12 +58,12 @@ class Info
         $this->height = $geometry['height'];
         $this->width = $geometry['width'];
 
-        $this->tags[] = Info::TAG_TYPE . $imageType;
-        $this->tags[] = Info::TAG_NUMBER_IMAGES . $this->numberImages;
+        $this->tags[] = ImageInfo::TAG_TYPE . $imageType;
+        $this->tags[] = ImageInfo::TAG_NUMBER_IMAGES . $this->numberImages;
     }
 
     /**
-     * Путь к файлу
+     * Абсолютный путь к файлу
      *
      * @return string
      */
@@ -127,7 +127,7 @@ class Info
      * 
      * @return array
      */
-    public function getTags()
+    private function getTags()
     {
         return $this->tags;
     }
@@ -143,7 +143,7 @@ class Info
         sort($tags);
 
         return dechex(Utils::crc16(
-            implode(Info::TAGS_SEPARATOR, $tags)
+            implode(ImageInfo::TAGS_SEPARATOR, $tags)
         ));
     }
 
