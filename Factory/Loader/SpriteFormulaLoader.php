@@ -30,11 +30,13 @@ class SpriteFormulaLoader extends BasePhpFormulaLoader
             $options = array_merge($options, $formulae[2]);
         }
 
-        return array('sprite' => array(
-            $this->inputs,
-            $filters,
-            $options,
-        ));
+        return count($this->inputs)
+            ? array('php_sprite' => array(
+                $this->inputs,
+                $filters,
+                $options,
+            ))
+            : array();
     }
 
     protected function registerPrototypes()

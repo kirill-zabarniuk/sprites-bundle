@@ -23,22 +23,25 @@ class AssetManagerPass implements CompilerPassInterface
         $am = $container->getDefinition('assetic.asset_manager');
 
         // Set DirectoryResourceDefinition
-        // TODO: раскомментировать $engines
-        // $engines = $container->getParameter('templating.engines');
-        $engines = array('php');
+        $engines = $container->getParameter('templating.engines');
         // bundle and kernel resources
         $bundles = $container->getParameter('kernel.bundles');
-        $alias = $container->getParameter('fernando.formula_loader.alias');
         $asseticBundles = $container->getParameterBag()->resolveValue($container->getParameter('assetic.bundles'));
         foreach ($asseticBundles as $bundleName) {
             $rc = new \ReflectionClass($bundles[$bundleName]);
             foreach ($engines as $engine) {
-                $this->setBundleDirectoryResources($container, $engine, $alias, dirname($rc->getFileName()), $bundleName);
+                $loader = $container->getParameter(
+                    sprintf('fernando.formula_loader_%s.alias', $engine)
+                );
+                $this->setBundleDirectoryResources($container, $engine, $loader, dirname($rc->getFileName()), $bundleName);
             }
         }
 
         foreach ($engines as $engine) {
-            $this->setAppDirectoryResources($container, $engine, $alias);
+            $loader = $container->getParameter(
+                sprintf('fernando.formula_loader_%s.alias', $engine)
+            );
+            $this->setAppDirectoryResources($container, $engine, $loader);
         }
 
         // add resources
