@@ -19,6 +19,8 @@
         <parameter key="fernando.helper.sprite.class">Fernando\Bundle\SpritesBundle\Templating\SpriteHelper</parameter>
         <parameter key="fernando.formula_loader.class">Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteFormulaLoader</parameter>
         <parameter key="assetic.worker.build_sprite.class">Fernando\Bundle\SpritesBundle\Factory\Worker\BuildSpritesWorker</parameter>
+
+        <parameter key="fernando.twig.sprite_extension.class">Fernando\Bundle\SpritesBundle\Extension\Twig\SpriteExtension</parameter>
     </parameters>
 
     <services>
@@ -68,6 +70,14 @@
         <service id="assetic.worker.build_sprite" class="%assetic.worker.build_sprite.class%" public="false">
             <tag name="assetic.factory_worker" />
             <argument type="service" id="fernando.sprites.manager" />
+        </service>
+
+        <service id="fernando.twig.sprite_extension" class="%fernando.twig.sprite_extension.class%">
+            <tag name="twig.extension" />
+            <tag name="assetic.templating.twig" />
+            <argument type="service" id="fernando.sprites.info_loader" />
+            <argument type="service" id="fernando.sprites.css_templates" />
+            <argument>%kernel.root_dir%</argument>
         </service>
     </services>
 </container>
