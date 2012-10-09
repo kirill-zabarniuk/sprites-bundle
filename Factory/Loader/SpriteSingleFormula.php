@@ -62,10 +62,12 @@ class SpriteSingleFormula
      */
     public function getFormula()
     {
-        return array('sprite' => array(
-            array_unique($this->inputs),
-            array_unique($this->filters),
-            $this->options,
-        ));
+        return count($inputs = array_unique($this->inputs))
+            ? array('sprite' => array(
+                $inputs,
+                array_unique($this->filters),
+                $this->options,
+            ))
+            : array();
     }
 }

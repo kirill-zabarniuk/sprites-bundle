@@ -32,6 +32,10 @@
         <service id="fernando.sprites.css_manager" class="%fernando.sprites.css_manager.class%">
             <argument type="service" id="fernando.sprites.css_templates" />
         </service>
-        <service id="fernando.sprites.css_templates" class="%fernando.sprites.css_templates.class%" />
+        <service id="fernando.sprites.css_templates" class="%fernando.sprites.css_templates.class%">
+            <call method="setCssClass">
+                <argument>%fernando.sprites.css_class%</argument>
+            </call>
+        </service>
     </services>
 </container>

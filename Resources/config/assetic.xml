@@ -14,6 +14,7 @@
         <parameter key="fernando.single_formula.class">Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteSingleFormula</parameter>
         <parameter key="fernando.formula_loader.class">Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteFormulaLoader</parameter>
         <parameter key="fernando.formula_loader_twig.class">Fernando\Bundle\SpritesBundle\Extension\Twig\TwigFormulaLoader</parameter>
+
         <parameter key="fernando.assetic_worker.build_sprite.class">Fernando\Bundle\SpritesBundle\Factory\Worker\BuildSpritesWorker</parameter>
     </parameters>
 

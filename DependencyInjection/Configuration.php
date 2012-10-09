@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('jar_yml')->end()
                 ->arrayNode('css')
                     ->children()
-                        ->scalarNode('class')->end()
+                        ->scalarNode('class')->defaultValue('sprite')->end()
                     ->end()
                 ->end()
                 ->arrayNode('assetic_filters')
