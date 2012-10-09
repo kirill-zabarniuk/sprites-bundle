@@ -52,6 +52,9 @@ class AssetManagerPass implements CompilerPassInterface
                 }
             }
         }
+
+        // хак, для того чтобы спрайты обрабатывались в первую очередь и сгенерировался sprite.css
+        $this->reorderMethodCalls($am);
     }
 
     protected function setBundleDirectoryResources(ContainerBuilder $container, $engine, $loader, $bundleDirName, $bundleName)
@@ -71,5 +74,30 @@ class AssetManagerPass implements CompilerPassInterface
             'fernando.'.$engine.'_directory_resource.kernel',
             new DirectoryResourceDefinition('', $engine, $loader, array($container->getParameter('kernel.root_dir').'/Resources/views'))
         );
+    }
+
+    protected function reorderMethodCalls(\Symfony\Component\DependencyInjection\Definition $am)
+    {
+        $calls = $am->getMethodCalls();
+        usort($calls, function($a, $b) {
+            if ($a[0] === 'addResource' && $b[0] === 'addResource') {
+                $aliases = array('php_sprite', 'twig_sprite');
+                $aFirst = in_array($a[1][1], $aliases);
+                $bFirst = in_array($b[1][1], $aliases);
+
+                if ($aFirst && $bFirst) {
+                    return 0;
+                }
+
+                return $aFirst ? -1 : 1;
+            }
+
+            if ($a[0] !== 'addResource' && $b[0] !== 'addResource') {
+                return 0;
+            }
+
+            return $a[0] === 'addResource' ? 1 : -1;
+        });
+        $am->setMethodCalls($calls);
     }
 }
