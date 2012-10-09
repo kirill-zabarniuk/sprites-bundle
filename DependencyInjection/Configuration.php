@@ -33,6 +33,11 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('class')->end()
                     ->end()
                 ->end()
+                ->arrayNode('assetic_filters')
+                    ->defaultValue(array('sprite'))
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
             ->end()
         ;
 

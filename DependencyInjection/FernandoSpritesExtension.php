@@ -25,8 +25,11 @@ class FernandoSpritesExtension extends Extension
         $container->setParameter('fernando.java', $config['java']);
         $container->setParameter('fernando.sprites.jar_yml', $config['jar_yml']);
         $container->setParameter('fernando.sprites.jar_packer', $config['jar_packer']);
+        $container->setParameter('fernando.sprites.assetic_filters', $config['assetic_filters']);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+        $loader->load('templating.xml');
+        $loader->load('assetic.xml');
     }
 }

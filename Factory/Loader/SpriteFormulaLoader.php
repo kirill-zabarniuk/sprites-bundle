@@ -4,13 +4,27 @@ namespace Fernando\Bundle\SpritesBundle\Factory\Loader;
 
 use Assetic\Factory\Loader\BasePhpFormulaLoader;
 use Assetic\Factory\Resource\ResourceInterface;
+use Assetic\Factory\AssetFactory;
+use Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteSingleFormula;
 
 /**
  * Парсит php шаблоны и строит формулы, по которым затем создаются asset-ы
  */
 class SpriteFormulaLoader extends BasePhpFormulaLoader
 {
-    private $inputs = array();
+    private $formula = null;
+
+    /**
+     * Конструктор
+     * 
+     * @param \Assetic\Factory\AssetFactory                                     $factory Asset factory
+     * @param \Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteSingleFormula $formula Объект, хранящий единую формулу для спрайтов
+     */
+    public function __construct(AssetFactory $factory, SpriteSingleFormula $formula)
+    {
+        $this->formula = $formula;
+        parent::__construct($factory);
+    }
 
     /**
      * Возвращает формулу (используется фиксированное имя)
@@ -21,22 +35,13 @@ class SpriteFormulaLoader extends BasePhpFormulaLoader
      */
     public function load(ResourceInterface $resource)
     {
-        $formula = parent::load($resource);
+        $formulas = parent::load($resource);
 
-        $filters = array('sprite');
-        $options = array();
-        foreach ($formula as $formulae) {
-            $this->inputs = array_merge($this->inputs, $formulae[0]);
-            $options = array_merge($options, $formulae[2]);
+        foreach ($formulas as $formula) {
+            $this->formula->mergeFormula($formula);
         }
 
-        return count($this->inputs)
-            ? array('php_sprite' => array(
-                $this->inputs,
-                $filters,
-                $options,
-            ))
-            : array();
+        return $this->formula->getFormula();
     }
 
     protected function registerPrototypes()

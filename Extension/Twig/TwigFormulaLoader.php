@@ -4,25 +4,40 @@ namespace Fernando\Bundle\SpritesBundle\Extension\Twig;
 
 use Assetic\Factory\Loader\FormulaLoaderInterface;
 use Assetic\Factory\Resource\ResourceInterface;
+use Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteSingleFormula;
 
 /**
  * Loads asset formulae from Twig templates.
  */
 class TwigFormulaLoader implements FormulaLoaderInterface
 {
-    private $twig;
-    private $inputs = array();
+    private $twig    = null;
+    private $formula = null;
 
-    public function __construct(\Twig_Environment $twig)
+    /**
+     * Конструктор
+     * 
+     * @param \Twig_Environment                                                 $twig    Twig environment
+     * @param \Fernando\Bundle\SpritesBundle\Factory\Loader\SpriteSingleFormula $formula Объект, хранящий единую формулу для спрайтов
+     */
+    public function __construct(\Twig_Environment $twig, SpriteSingleFormula $formula)
     {
-        $this->twig = $twig;
+        $this->twig    = $twig;
+        $this->formula = $formula;
     }
 
+    /**
+     * Loads formulae from a resource.
+     *
+     * Formulae should be loaded the same regardless of the current debug
+     * mode. Debug considerations should happen downstream.
+     *
+     * @param ResourceInterface $resource A resource
+     *
+     * @return array An array of formulae
+     */
     public function load(ResourceInterface $resource)
     {
-        $formulae = array();
-        $this->inputs = array();
-
         try {
             $tokens = $this->twig->tokenize($resource->getContent(), (string) $resource);
             $nodes  = $this->twig->parse($tokens);
@@ -32,15 +47,7 @@ class TwigFormulaLoader implements FormulaLoaderInterface
 
         $this->loadNode($nodes);
 
-        if (count($this->inputs)) {
-            $formulae = array('twig_sprite' => array(
-                $this->inputs,
-                array('sprite'),
-                array(),
-            ));
-        }
-
-        return $formulae;
+        return $this->formula->getFormula();
     }
 
     /**
@@ -53,7 +60,7 @@ class TwigFormulaLoader implements FormulaLoaderInterface
     private function loadNode(\Twig_Node $node)
     {
         if ($node instanceof SpriteNode) {
-            $this->inputs[] = $node->getAttribute('src');
+            $this->formula->addInput($node->getAttribute('src'));
         }
 
         foreach ($node as $child) {
