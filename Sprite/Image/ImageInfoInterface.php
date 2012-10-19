@@ -50,6 +50,13 @@ interface ImageInfoInterface
     public function getNumberImages();
 
     /**
+     * Массив тэгов
+     *
+     * @return array
+     */
+    public function getTags();
+
+    /**
      * Хэш от набора тэгов, изображения с одинаковым хэшем попадают в один спрайт
      *
      * @return string

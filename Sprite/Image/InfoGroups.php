@@ -39,7 +39,7 @@ class InfoGroups
      */
     public function add($path)
     {
-        $info = $this->getImageInfoLoader()->load($path);
+        $info = $this->getImageInfoLoader()->getImageInfo($path);
 
         $groupId = $info->getTagsStr();
         if (!array_key_exists($groupId, $this->groups)) {

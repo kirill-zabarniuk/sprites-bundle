@@ -7,29 +7,11 @@ use Fernando\Bundle\SpritesBundle\Utils\Utils;
 /**
  * Информация об изображении
  */
-class ImageInfo implements ImageInfoInterface
+class ImageInfo extends AbstractImageInfo implements ImageInfoInterface
 {
-    const TAG_TYPE = 't';
-    const TAG_NUMBER_IMAGES = 'n';
-    const TAG_DELAY = 'd';
-    const TAGS_SEPARATOR = ':';
-
-    /** @var \Imagick */
-    private $imagick;
-
-    private $filePath;
-    private $tags;
-
-    private $width;
-    private $height;
-    private $alphaChannel;
-    private $numberImages;
-    private $delay = null;
-
-    private $fileHash;
-
     /**
      * Конструктор
+     * 
      * @param string $filePath Абсолютный путь к изображению
      * @param array  $tags     Массив тэгов
      */
@@ -47,7 +29,7 @@ class ImageInfo implements ImageInfoInterface
 
         if ($this->numberImages > 1) {
             $this->delay = $this->imagick->getImageDelay(); // TODO: разный delay для разных кадров
-            $this->tags[] = ImageInfo::TAG_DELAY . $this->delay;
+            $this->tags[] = AbstractImageInfo::TAG_DELAY . $this->delay;
 
             $this->imagick->setIteratorIndex(0);
             $geometry = $this->imagick->getImage()->getImageGeometry();
@@ -58,106 +40,7 @@ class ImageInfo implements ImageInfoInterface
         $this->height = $geometry['height'];
         $this->width = $geometry['width'];
 
-        $this->tags[] = ImageInfo::TAG_TYPE . $imageType;
-        $this->tags[] = ImageInfo::TAG_NUMBER_IMAGES . $this->numberImages;
-    }
-
-    /**
-     * Абсолютный путь к файлу
-     *
-     * @return string
-     */
-    public function getFilePath()
-    {
-        return $this->filePath;
-    }
-
-    /**
-     * Объект imagick
-     *
-     * @return \Imagick
-     */
-    public function getImagick()
-    {
-        return $this->imagick;
-    }
-
-    /**
-     * Ширина изображения
-     * 
-     * @return int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * Высота изображения
-     * 
-     * @return int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
-     * Значение ImageAlphaChannel (прозрачность)
-     * 
-     * @return int
-     */
-    public function getAlphaChannel()
-    {
-        return $this->alphaChannel;
-    }
-
-    /**
-     * Количество изображений ( > 1 для анимированных изображений)
-     *
-     * @return int
-     */
-    public function getNumberImages()
-    {
-        return $this->numberImages;
-    }
-
-    /**
-     * Массив тэгов
-     * 
-     * @return array
-     */
-    private function getTags()
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Хэш от набора тэгов, изображения с одинаковым хэшем попадают в один спрайт
-     *
-     * @return string
-     */
-    public function getTagsStr()
-    {
-        $tags = $this->getTags();
-        sort($tags);
-
-        return dechex(Utils::crc16(
-            implode(ImageInfo::TAGS_SEPARATOR, $tags)
-        ));
-    }
-
-    /**
-     * Хэш изображения
-     * 
-     * @return type
-     */
-    public function getHash()
-    {
-        if (!isset($this->fileHash)) {
-            $this->fileHash = hash_file('crc32', $this->getFilePath());
-        }
-
-        return $this->fileHash;
+        $this->tags[] = AbstractImageInfo::TAG_TYPE . $imageType;
+        $this->tags[] = AbstractImageInfo::TAG_NUMBER_IMAGES . $this->numberImages;
     }
 }

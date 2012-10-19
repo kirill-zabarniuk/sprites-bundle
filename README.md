@@ -51,5 +51,6 @@ Defaul configuration
         jar_yml:    %kernel.root_dir%/Resources/java/snakeyaml-1.9-SNAPSHOT.jar
         css:
             class: sprite
-        assetic_filters: [sprite]
-
+        assetic:
+            enabled: false
+            formula_filters: [sprite]

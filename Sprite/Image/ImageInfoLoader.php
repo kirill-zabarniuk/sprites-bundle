@@ -2,21 +2,24 @@
 
 namespace Fernando\Bundle\SpritesBundle\Sprite\Image;
 
-use Assetic\Cache\ConfigCache;
+use Fernando\Bundle\SpritesBundle\Cache\PhpConfigCache;
 
 /**
- * Загрузка информация об изображении
+ * Загрузка информации об изображении
  */
 class ImageInfoLoader
 {
+    const CONFIG_CACHE_FILE = 'imagesInfo.cache.php';
+
     private $configCache = null;
+    private $imagesInfo = null;
 
     /**
      * Конструктор
      * 
-     * @param \Assetic\Cache\ConfigCache $configCache
+     * @param \Fernando\Bundle\SpritesBundle\Cache\PhpConfigCache $configCache
      */
-    public function __construct(ConfigCache $configCache)
+    public function __construct(PhpConfigCache $configCache)
     {
         $this->configCache = $configCache;
     }
@@ -27,18 +30,59 @@ class ImageInfoLoader
     }
 
     /**
-     * Загрузка информации об изображении
+     * Сохранение инф-ции об изображениях в кэше
      * 
-     * @param string $filePath Абсолютный путь к изображению
-     * @param array  $tags     Массив тэгов
-     * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader
      */
-    public function load($filePath, $tags = array())
+    private function write()
     {
-        $imageInfo = new CachedImageInfo($filePath, $tags);
-        $imageInfo->setConfigCache($this->getConfigCache());
+        $this->getConfigCache()->write(ImageInfoLoader::CONFIG_CACHE_FILE, $this->imagesInfo, true);
 
-        return $imageInfo;
+        return $this;
+    }
+
+    /**
+     * Загрузка информации об изображенииях из кэша
+     * 
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader
+     */
+    private function load()
+    {
+        $cc = $this->getConfigCache();
+
+        if ($cc->has(ImageInfoLoader::CONFIG_CACHE_FILE)) {
+            $this->imagesInfo = $cc->load(ImageInfoLoader::CONFIG_CACHE_FILE);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Получение объекта, хранящего информацию об изображении
+     * 
+     * @param string $filePath Путь к файлу
+     * @param array  $tags     Список тэгов
+     * 
+     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\CachedImageInfo
+     */
+    public function getImageInfo($filePath, $tags = array())
+    {
+        if ($this->imagesInfo === null) {
+            $this->load();
+        }
+
+        $cachedImageInfo = new CachedImageInfo($filePath, $tags);
+
+        if (!isset($this->imagesInfo[$filePath])) {
+            $imageInfo = new ImageInfo($filePath, $tags);
+            $cachedImageInfo->setImageInfoObject($imageInfo);
+
+            $this->imagesInfo[$filePath] = $imageInfo->toArray();
+            $this->write();
+        }
+
+        $cachedImageInfo->fromArray($this->imagesInfo[$filePath]);
+
+        return $cachedImageInfo;
     }
 }

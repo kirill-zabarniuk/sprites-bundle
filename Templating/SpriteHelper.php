@@ -71,7 +71,7 @@ class SpriteHelper extends Helper
     public function sprite($relativePath)
     {
         $filepath = $this->getWebDir() . DIRECTORY_SEPARATOR . $relativePath;
-        $info = $this->getImageInfoLoader()->load($filepath);
+        $info = $this->getImageInfoLoader()->getImageInfo($filepath);
 
         $spriteId = $info->getTagsStr();
         $imageId  = $info->getHash();

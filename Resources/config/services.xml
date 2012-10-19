@@ -7,6 +7,9 @@
     <parameters>
         <parameter key="fernando.sprites.java">%fernando.java%</parameter>
 
+        <parameter key="fernando.cache_dir">%kernel.cache_dir%/fernando</parameter>
+        <parameter key="fernando.config_cache.class">Fernando\Bundle\SpritesBundle\Cache\PhpConfigCache</parameter>
+
         <parameter key="fernando.sprites.info_loader.class">Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader</parameter>
         <parameter key="fernando.sprites.packer.class">Fernando\Bundle\SpritesBundle\Packer\PackerGuillotine</parameter>
         <parameter key="fernando.sprites.manager.class">Fernando\Bundle\SpritesBundle\Sprite\SpriteManager</parameter>
@@ -15,8 +18,12 @@
     </parameters>
 
     <services>
+        <service id="fernando.config_cache" class="%fernando.config_cache.class%" public="false">
+            <argument>%fernando.cache_dir%</argument>
+        </service>
+
         <service id="fernando.sprites.info_loader" class="%fernando.sprites.info_loader.class%">
-            <argument type="service" id="fernando.assetic_config_cache" />
+            <argument type="service" id="fernando.config_cache" />
         </service>
         <service id="fernando.sprites.packer" class="%fernando.sprites.packer.class%">
             <argument>%fernando.sprites.jar_yml%</argument>

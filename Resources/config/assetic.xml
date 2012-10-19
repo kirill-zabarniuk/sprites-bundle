@@ -7,7 +7,6 @@
     <parameters>
         <parameter key="fernando.formula_loader_php.alias">php_sprite</parameter>
         <parameter key="fernando.formula_loader_twig.alias">twig_sprite</parameter>
-        <parameter key="fernando.cache_dir">%kernel.cache_dir%/fernando</parameter>
 
         <parameter key="fernando.assetic_filter.sprite.class">Fernando\Bundle\SpritesBundle\Filter\FakeSpriteFilter</parameter>
 

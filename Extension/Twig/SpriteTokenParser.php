@@ -71,7 +71,7 @@ class SpriteTokenParser extends \Twig_TokenParser
     private function getCssClasses($src)
     {
         $filepath = $this->getWebDir() . DIRECTORY_SEPARATOR . $src;
-        $info = $this->getImageInfoLoader()->load($filepath);
+        $info = $this->getImageInfoLoader()->getImageInfo($filepath);
 
         $spriteId = $info->getTagsStr();
         $imageId  = $info->getHash();

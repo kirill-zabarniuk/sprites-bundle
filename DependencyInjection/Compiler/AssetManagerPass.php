@@ -16,6 +16,9 @@ class AssetManagerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasParameter('fernando.sprites.assetic_enabled')) {
+            return;
+        }
         if (!$container->hasDefinition('assetic.asset_manager')) {
             return;
         }
