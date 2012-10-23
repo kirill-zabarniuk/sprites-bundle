@@ -61,14 +61,7 @@ class SpriteHelper extends Helper
         )));
     }
 
-    /**
-     * Хэлпер для вывода изображения
-     * 
-     * @param string $relativePath Путь к изображению относительно web root
-     *
-     * @return string
-     */
-    public function sprite($relativePath)
+    public function getCssClasses($relativePath)
     {
         $filepath = $this->getWebDir() . DIRECTORY_SEPARATOR . $relativePath;
         $info = $this->getImageInfoLoader()->getImageInfo($filepath);
@@ -78,12 +71,25 @@ class SpriteHelper extends Helper
         $size     = $info->getWidth() . 'x' . $info->getHeight();
 
         return sprintf(
-            '<span class="%s %s %s %s"></span>',
+            '%s %s %s %s',
             $this->getTemplates()->getCssClass(),
             $this->getTemplates()->getSpriteClass($spriteId),
             $this->getTemplates()->getImageClass($imageId),
             $this->getTemplates()->getSizeClass($size)
         );
+    }
+
+    /**
+     * Хэлпер для вывода изображения
+     * 
+     * @param string $relativePath Путь к изображению относительно web root
+     * @param array  $attributes   Атрибуты
+     *
+     * @return string
+     */
+    public function sprite($relativePath, $attributes = array())
+    {
+        return sprintf('<span class="%s"></span>', $this->getCssClasses($relativePath));
     }
 
     /**

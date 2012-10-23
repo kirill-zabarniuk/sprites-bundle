@@ -2,8 +2,7 @@
 
 namespace Fernando\Bundle\SpritesBundle\Extension\Twig;
 
-use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader;
-use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
+use Symfony\Component\Templating\Helper\Helper;
 
 /**
  * Description of SpriteTokenParser
@@ -11,16 +10,9 @@ use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
 class SpriteTokenParser extends \Twig_TokenParser
 {
     /**
-     * @var ImageInfoLoader
+     * @var \Fernando\Bundle\SpritesBundle\Templating\SpriteHelper
      */
-    private $infoLoader = null;
-
-    /**
-     * @var CssTemplates
-     */
-    private $templates  = null;
-
-    private $rootDir    = '';
+    private $helper = null;
 
     /**
      * Конструктор
@@ -29,61 +21,19 @@ class SpriteTokenParser extends \Twig_TokenParser
      * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates      $templates  Сервис работы с шаблонами
      * @param string                                                      $rootDir    Application root directory
      */
-    public function __construct(ImageInfoLoader $infoLoader, CssTemplates $templates, $rootDir)
+    public function __construct(Helper $helper)
     {
-        $this->infoLoader = $infoLoader;
-        $this->templates  = $templates;
-        $this->rootDir    = $rootDir;
+        $this->helper = $helper;
     }
 
-    /**
-     * Сервис получения информации об изображениях
-     *
-     * @return ImageInfoLoader
-     */
-    private function getImageInfoLoader()
+    private function getSpriteHelper()
     {
-        return $this->infoLoader;
-    }
-
-    /**
-     * Сервис css шаблонов
-     *
-     * @return CssTemplates
-     */
-    private function getTemplates()
-    {
-        return $this->templates;
-    }
-
-    private function getRootDir()
-    {
-        return $this->rootDir;
-    }
-
-    private function getWebDir()
-    {
-        return realpath(join(DIRECTORY_SEPARATOR, array(
-            $this->getRootDir(), '..', 'web',
-        )));
+        return $this->helper;
     }
 
     private function getCssClasses($src)
     {
-        $filepath = $this->getWebDir() . DIRECTORY_SEPARATOR . $src;
-        $info = $this->getImageInfoLoader()->getImageInfo($filepath);
-
-        $spriteId = $info->getTagsStr();
-        $imageId  = $info->getHash();
-        $size     = $info->getWidth() . 'x' . $info->getHeight();
-
-        return sprintf(
-            '%s %s %s %s',
-            $this->getTemplates()->getCssClass(),
-            $this->getTemplates()->getSpriteClass($spriteId),
-            $this->getTemplates()->getImageClass($imageId),
-            $this->getTemplates()->getSizeClass($size)
-        );
+        return $this->getSpriteHelper()->getCssClasses($src);
     }
 
     /**

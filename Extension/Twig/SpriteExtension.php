@@ -2,8 +2,7 @@
 
 namespace Fernando\Bundle\SpritesBundle\Extension\Twig;
 
-use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader;
-use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
+use Symfony\Component\Templating\Helper\Helper;
 
 /**
  * Description of SpriteExtension
@@ -11,29 +10,50 @@ use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
 class SpriteExtension extends \Twig_Extension
 {
     /**
-     * @var ImageInfoLoader
+     * @var \Fernando\Bundle\SpritesBundle\Templating\SpriteHelper
      */
-    private $infoLoader = null;
-
-    /**
-     * @var CssTemplates
-     */
-    private $templates  = null;
-
-    private $rootDir    = '';
+    private $helper = null;
 
     /**
      * Конструктор
      *
-     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader $infoLoader Сервис получения информации об изображениях
-     * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates      $templates  Сервис работы с шаблонами
-     * @param string                                                      $rootDir    Application root directory
+     * @param \Symfony\Component\Templating\Helper\Helper $helper
      */
-    public function __construct(ImageInfoLoader $infoLoader, CssTemplates $templates, $rootDir)
+    public function __construct(Helper $helper)
     {
-        $this->infoLoader = $infoLoader;
-        $this->templates = $templates;
-        $this->rootDir = $rootDir;
+        $this->helper = $helper;
+    }
+
+    private function getSpriteHelper()
+    {
+        return $this->helper;
+    }
+
+    /**
+     * Returns a list of functions to add to the existing list.
+     *
+     * @return array An array of functions
+     */
+    public function getFunctions()
+    {
+        return array(
+            'sprite' => new \Twig_Function_Method($this, 'sprite', array(
+                'is_safe' => array('html'),
+            )),
+        );
+    }
+
+    /**
+     * Генерация html-кода для показа изображения (img или span)
+     *
+     * @param string $relativePath Путь к изображению относительно web root
+     * @param array  $attributes   Атрибуты
+     *
+     * @return string
+     */
+    public function sprite($relativePath, $attributes = array())
+    {
+        return $this->getSpriteHelper()->sprite($relativePath, $attributes);
     }
 
     /**
@@ -44,7 +64,7 @@ class SpriteExtension extends \Twig_Extension
     public function getTokenParsers()
     {
         return array(
-            new SpriteTokenParser($this->infoLoader, $this->templates, $this->rootDir),
+            new SpriteTokenParser($this->helper),
         );
     }
 

@@ -10,7 +10,7 @@
     </parameters>
 
     <services>
-        <service id="fernando.helper.sprite" class="%fernando.helper.sprite.class%" scope="request">
+        <service id="fernando.helper.sprite" class="%fernando.helper.sprite.class%">
             <tag name="templating.helper" alias="fernando" />
             <argument type="service" id="fernando.sprites.info_loader" />
             <argument type="service" id="fernando.sprites.css_templates" />
@@ -19,9 +19,7 @@
         <service id="fernando.twig.sprite_extension" class="%fernando.twig.sprite_extension.class%">
             <tag name="twig.extension" />
             <tag name="assetic.templating.twig" />
-            <argument type="service" id="fernando.sprites.info_loader" />
-            <argument type="service" id="fernando.sprites.css_templates" />
-            <argument>%kernel.root_dir%</argument>
+            <argument type="service" id="fernando.helper.sprite" />
         </service>
     </services>
 </container>
