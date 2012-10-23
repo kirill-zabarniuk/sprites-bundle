@@ -11,7 +11,8 @@ use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
 class CssManager
 {
     private $templates;
-    private $filename = 'sprite.css';
+    private $rootDir  = '';
+    private $filename = '';
     private $cssDir   = 'css';
 
     private $spriteIds  = array();
@@ -22,10 +23,14 @@ class CssManager
      * Конструктор
      * 
      * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates $templates
+     * @param string                                                 $rootDir
+     * @param string                                                 $filename
      */
-    public function __construct(CssTemplates $templates)
+    public function __construct(CssTemplates $templates, $rootDir, $filename)
     {
         $this->templates = $templates;
+        $this->rootDir   = $rootDir;
+        $this->filename  = $filename;
     }
 
     /**
@@ -36,6 +41,18 @@ class CssManager
     private function getTemplates()
     {
         return $this->templates;
+    }
+
+    private function getRootDir()
+    {
+        return $this->rootDir;
+    }
+
+    private function getWebDir()
+    {
+        return realpath(join(DIRECTORY_SEPARATOR, array(
+            $this->getRootDir(), '..', 'web',
+        )));
     }
 
     /**
@@ -171,10 +188,16 @@ class CssManager
     /**
      * Запись стилей в файл
      * 
-     * @param string $filename
+     * @param string $filepath
      */
-    public function dump($filename)
+    public function dump($filepath = null)
     {
-        file_put_contents($filename, $this->getCss());
+        if ($filepath === null) {
+            $filepath = implode(DIRECTORY_SEPARATOR, array(
+                $this->getWebDir(), $this->getCssDir(), $this->getFilename(),
+            ));
+        }
+
+        file_put_contents($filepath, $this->getCss());
     }
 }

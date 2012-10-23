@@ -87,5 +87,6 @@ class SpritesBuildCommand extends Command
         $manager = $container->get('fernando.sprites.manager');
         /* @var $manager \Fernando\Bundle\SpritesBundle\Sprite\SpriteManager */
         $manager->processAll();
+        $manager->getCssManager()->dump();
     }
 }

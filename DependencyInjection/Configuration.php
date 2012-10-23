@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('css')
                     ->children()
                         ->scalarNode('class')->defaultValue('sprite')->end()
+                        ->scalarNode('filename')->defaultValue('sprite.css')->end()
                     ->end()
                 ->end()
                 ->arrayNode('assetic')

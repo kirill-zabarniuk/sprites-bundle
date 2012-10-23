@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -38,6 +38,8 @@
         </service>
         <service id="fernando.sprites.css_manager" class="%fernando.sprites.css_manager.class%">
             <argument type="service" id="fernando.sprites.css_templates" />
+            <argument>%kernel.root_dir%</argument>
+            <argument>%fernando.sprites.css_filename%</argument>
         </service>
         <service id="fernando.sprites.css_templates" class="%fernando.sprites.css_templates.class%">
             <call method="setCssClass">
