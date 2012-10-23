@@ -17,9 +17,7 @@ class SpriteTokenParser extends \Twig_TokenParser
     /**
      * Конструктор
      *
-     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader $infoLoader Сервис получения информации об изображениях
-     * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates      $templates  Сервис работы с шаблонами
-     * @param string                                                      $rootDir    Application root directory
+     * @param \Symfony\Component\Templating\Helper\Helper $helper
      */
     public function __construct(Helper $helper)
     {
@@ -29,11 +27,6 @@ class SpriteTokenParser extends \Twig_TokenParser
     private function getSpriteHelper()
     {
         return $this->helper;
-    }
-
-    private function getCssClasses($src)
-    {
-        return $this->getSpriteHelper()->getCssClasses($src);
     }
 
     /**
@@ -59,8 +52,7 @@ class SpriteTokenParser extends \Twig_TokenParser
         $stream->expect(\Twig_Token::BLOCK_END_TYPE);
 
         $attributes = array(
-            'class' => $this->getCssClasses($src),
-            'src'   => $src,
+            'tag' => $this->getSpriteHelper()->sprite($src),
         );
 
         return new SpriteNode($attributes, $lineno, $this->getTag());

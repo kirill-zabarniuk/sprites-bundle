@@ -60,12 +60,13 @@ class ImageInfoLoader
     /**
      * Получение объекта, хранящего информацию об изображении
      * 
-     * @param string $filePath Путь к файлу
-     * @param array  $tags     Список тэгов
+     * @param string $filePath   Путь к файлу
+     * @param array  $tags       Список тэгов
+     * @param bool   $cachedOnly Возвращать только информацию из кэша (не получать информацию о неизвестном изображении)
      * 
-     * @return \Fernando\Bundle\SpritesBundle\Sprite\Image\CachedImageInfo
+     * @return null|ImageInfoInterface
      */
-    public function getImageInfo($filePath, $tags = array())
+    public function getImageInfo($filePath, $tags = array(), $cachedOnly = false)
     {
         if ($this->imagesInfo === null) {
             $this->load();
@@ -74,6 +75,9 @@ class ImageInfoLoader
         $cachedImageInfo = new CachedImageInfo($filePath, $tags);
 
         if (!isset($this->imagesInfo[$filePath])) {
+            if ($cachedOnly) {
+                return null;
+            }
             $imageInfo = new ImageInfo($filePath, $tags);
             $cachedImageInfo->setImageInfoObject($imageInfo);
 

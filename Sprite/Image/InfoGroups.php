@@ -36,10 +36,11 @@ class InfoGroups
      * Добавление информации об изображении
      * 
      * @param string $path Путь к файлу
+     * @param array  $tags Список доп. тэгов
      */
-    public function add($path)
+    public function add($path, $tags = array())
     {
-        $info = $this->getImageInfoLoader()->getImageInfo($path);
+        $info = $this->getImageInfoLoader()->getImageInfo($path, $tags);
 
         $groupId = $info->getTagsStr();
         if (!array_key_exists($groupId, $this->groups)) {

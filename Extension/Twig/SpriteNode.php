@@ -28,7 +28,6 @@ class SpriteNode extends \Twig_Node
     {
         $compiler
             ->addDebugInfo($this)
-            ->write('echo strtr("<span class=\"'.$this->getAttribute('class').'\"></span>\\n", array())')
-            ->raw(";\n");
+            ->write('echo \'' . $this->getAttribute('tag') . "';\n");
     }
 }

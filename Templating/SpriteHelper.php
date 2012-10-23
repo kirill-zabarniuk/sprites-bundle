@@ -3,6 +3,7 @@
 namespace Fernando\Bundle\SpritesBundle\Templating;
 
 use Symfony\Component\Templating\Helper\Helper;
+use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface;
 use Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader;
 use Fernando\Bundle\SpritesBundle\Templating\CssTemplates;
 
@@ -61,35 +62,84 @@ class SpriteHelper extends Helper
         )));
     }
 
-    public function getCssClasses($relativePath)
+    private function expandAttributes($attributes = array())
     {
-        $filepath = $this->getWebDir() . DIRECTORY_SEPARATOR . $relativePath;
-        $info = $this->getImageInfoLoader()->getImageInfo($filepath);
+        $result = array();
+        foreach ($attributes as $attribute => $value) {
+            $result[] = is_int($attribute)
+                ? $value
+                : sprintf('%s="%s"', $attribute, $value);
+        }
 
+        return implode(' ', $result);
+    }
+
+    /**
+     * Код тэга img для вывода изображения
+     * 
+     * @param string $relativePath Путь к изображению относительно web root
+     * @param array  $attributes   Доп. атрибуты тэга
+     * @param array  $options      Опции
+     *
+     * @return string
+     */
+    private function getImg($relativePath, $attributes, $options)
+    {
+        // TODO: опция для вывода абсолютного пути
+        $attr['src'] = '/' . $relativePath;
+
+        return sprintf('<img %s />', $this->expandAttributes(array_merge($attr, $attributes)));
+    }
+
+    /**
+     * Код тэга span для вывода изображения в виде спрайта
+     *
+     * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoInterface $info       Информация об изображении
+     * @param array                                                          $attributes Доп. атрибуты тэга
+     * @param array                                                          $options    Опции
+     *
+     * @return string
+     */
+    private function getSpan(ImageInfoInterface $info, $attributes, $options)
+    {
         $spriteId = $info->getTagsStr();
         $imageId  = $info->getHash();
         $size     = $info->getWidth() . 'x' . $info->getHeight();
 
-        return sprintf(
-            '%s %s %s %s',
+        // установка атрибута class (предполагается что он передан с ключом 'class')
+        $class = isset($attributes['class']) ? ' ' . $attributes['class'] : '';
+        unset($attributes['class']);
+        $attr['class'] = sprintf(
+            '%s %s %s %s%s',
             $this->getTemplates()->getCssClass(),
             $this->getTemplates()->getSpriteClass($spriteId),
             $this->getTemplates()->getImageClass($imageId),
-            $this->getTemplates()->getSizeClass($size)
+            $this->getTemplates()->getSizeClass($size),
+            $class
         );
+
+        return sprintf('<span %s></span>', $this->expandAttributes(array_merge($attr, $attributes)));
     }
 
     /**
      * Хэлпер для вывода изображения
      * 
      * @param string $relativePath Путь к изображению относительно web root
-     * @param array  $attributes   Атрибуты
+     * @param array  $attributes   Доп. атрибуты тэга
+     * @param array  $options      Опции
      *
      * @return string
      */
-    public function sprite($relativePath, $attributes = array())
+    public function sprite($relativePath, $attributes = array(), $options = array())
     {
-        return sprintf('<span class="%s"></span>', $this->getCssClasses($relativePath));
+        $tags = isset($options['tags']) ? $options['tags'] : array();
+
+        $path = $this->getWebDir() . DIRECTORY_SEPARATOR . $relativePath;
+        $info = $this->getImageInfoLoader()->getImageInfo($path, $tags, true);
+
+        return ($info === null)
+            ? $this->getImg($relativePath, $attributes, $options)
+            : $this->getSpan($info, $attributes, $options);
     }
 
     /**
