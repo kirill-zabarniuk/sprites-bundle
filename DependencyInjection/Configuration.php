@@ -25,6 +25,7 @@ class Configuration implements ConfigurationInterface
         // more information on that topic.
         $rootNode
             ->children()
+                ->booleanNode('enabled')->defaultValue('true')->end()
                 ->scalarNode('java')->defaultValue('/usr/bin/java')->end()
                 ->scalarNode('jar_packer')->end()
                 ->scalarNode('jar_yml')->end()

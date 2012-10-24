@@ -46,6 +46,7 @@ Defaul configuration
 -------------
 
     fernando_sprites:
+        enabled:    true
         java:       /usr/bin/java
         jar_packer: %kernel.root_dir%/Resources/java/spritetools-1.0.jar
         jar_yml:    %kernel.root_dir%/Resources/java/snakeyaml-1.9-SNAPSHOT.jar

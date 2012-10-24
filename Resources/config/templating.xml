@@ -15,6 +15,7 @@
             <argument type="service" id="fernando.sprites.info_loader" />
             <argument type="service" id="fernando.sprites.css_templates" />
             <argument>%kernel.root_dir%</argument>
+            <argument>%fernando.sprites.enabled%</argument>
         </service>
         <service id="fernando.twig.sprite_extension" class="%fernando.twig.sprite_extension.class%">
             <tag name="twig.extension" />

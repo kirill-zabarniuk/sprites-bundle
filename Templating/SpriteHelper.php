@@ -15,6 +15,7 @@ class SpriteHelper extends Helper
     private $templates;
     private $rootDir;
     private $infoLoader = null;
+    private $enabled = true;
 
     /**
      * Конструктор
@@ -22,12 +23,14 @@ class SpriteHelper extends Helper
      * @param \Fernando\Bundle\SpritesBundle\Sprite\Image\ImageInfoLoader $infoLoader Сервис получения информации об изображениях
      * @param \Fernando\Bundle\SpritesBundle\Templating\CssTemplates      $templates  Сервис работы с шаблонами
      * @param string                                                      $rootDir    Application root directory
+     * @param bool                                                        $enabled    Использовать спрайты?
      */
-    public function __construct(ImageInfoLoader $infoLoader, CssTemplates $templates, $rootDir)
+    public function __construct(ImageInfoLoader $infoLoader, CssTemplates $templates, $rootDir, $enabled)
     {
         $this->infoLoader = $infoLoader;
         $this->templates = $templates;
         $this->rootDir = $rootDir;
+        $this->enabled = $enabled;
     }
 
     /**
@@ -137,7 +140,7 @@ class SpriteHelper extends Helper
         $path = $this->getWebDir() . DIRECTORY_SEPARATOR . $relativePath;
         $info = $this->getImageInfoLoader()->getImageInfo($path, $tags, true);
 
-        return ($info === null)
+        return ($info === null || !$this->enabled)
             ? $this->getImg($relativePath, $attributes, $options)
             : $this->getSpan($info, $attributes, $options);
     }

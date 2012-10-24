@@ -22,6 +22,7 @@ class FernandoSpritesExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('fernando.sprites.enabled', $config['enabled']);
         $container->setParameter('fernando.java', $config['java']);
         $container->setParameter('fernando.sprites.jar_yml', $config['jar_yml']);
         $container->setParameter('fernando.sprites.jar_packer', $config['jar_packer']);
