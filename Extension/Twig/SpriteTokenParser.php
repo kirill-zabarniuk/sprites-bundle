@@ -52,6 +52,7 @@ class SpriteTokenParser extends \Twig_TokenParser
         $stream->expect(\Twig_Token::BLOCK_END_TYPE);
 
         $attributes = array(
+            'src' => $src,
             'tag' => $this->getSpriteHelper()->sprite($src),
         );
 

@@ -33,6 +33,7 @@ class FernandoSpritesExtension extends Extension
         $loader->load('services.xml');
         $loader->load('templating.xml');
         if ($config['assetic']['enabled']) {
+            $container->setParameter('fernando.sprites.assetic_enabled', $config['assetic']['enabled']);
             $container->setParameter('fernando.sprites.assetic_filters', $config['assetic']['formula_filters']);
             $loader->load('assetic.xml');
         }
