@@ -61,6 +61,13 @@ class TwigFormulaLoader implements FormulaLoaderInterface
     {
         if ($node instanceof SpriteNode) {
             $this->formula->addInput($node->getAttribute('src'));
+        } elseif ($node instanceof \Twig_Node_Expression_Function && $node->getAttribute('name') === 'sprite') {
+            $args = $node->getNode('arguments');
+            $firstArg = reset($args);
+            $c = $firstArg[0];
+            if ($c instanceof \Twig_Node_Expression_Constant) {
+                $this->formula->addInput($c->getAttribute('value'));
+            }
         }
 
         foreach ($node as $child) {
